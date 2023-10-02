@@ -53,4 +53,5 @@ jmh {
     warmupIterations = 1
     iterations = 1
     fork = 1
+    threads = 2
 }
