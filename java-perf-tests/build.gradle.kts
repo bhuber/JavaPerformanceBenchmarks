@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    kotlin("jvm") version "1.9.10"
 }
 
 group = "org.bhuber"
@@ -12,8 +13,13 @@ repositories {
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    implementation(kotlin("stdlib-jdk8"))
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 }
 
 tasks.test {
     useJUnitPlatform()
+}
+kotlin {
+    jvmToolchain(19)
 }
