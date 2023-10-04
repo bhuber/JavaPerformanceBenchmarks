@@ -1,6 +1,7 @@
 package org.bhuber.java.collections.linkedList;
 
 import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -18,6 +19,7 @@ import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+@Log4j2
 public class ListPerfTest {
 
     interface ListPerfTestBase {
@@ -81,7 +83,8 @@ public class ListPerfTest {
         }
          */
 
-        @Param({"2", "8", "16", "64", "256", "1024", "4096", "16192", "65536", "1048576", "16777216", "268435456" })
+        //@Param({"2", "8", "16", "64", "256", "1024", "4096", "16192", "65536", "1048576", "16777216", "268435456" })
+        @Param({ /*"2", "8", "16", "64", "256", "1024", "4096", "16192", "65536", "1048576",*/ "4194304" })
         int listSize;
         Supplier<List<Integer>> listCreator;
         List<Integer> underTest;
@@ -113,14 +116,13 @@ public class ListPerfTest {
             final var listSize = state.listSize;
             final var underTest = state.underTest;
 
-            for (int i = 0; i < listSize; i++) {
+            for (int i = 1 << 20; i < listSize; i++) {
                 underTest.add(0, i);
             }
         }
 
     }
 
-    @Fork(0)
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @State(Scope.Benchmark)
@@ -128,7 +130,6 @@ public class ListPerfTest {
 
     }
 
-    @Fork(0)
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @State(Scope.Benchmark)
@@ -136,7 +137,6 @@ public class ListPerfTest {
 
     }
 
-    @Fork(0)
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @State(Scope.Benchmark)
@@ -144,11 +144,31 @@ public class ListPerfTest {
 
     }
 
-    @Fork(0)
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @State(Scope.Benchmark)
     public static class ArrayListSizedPerfTest extends SizedPerfTest implements ArrayListPerfTestBase {
 
+        @Override
+        public void append(SizedPerfTestState state) {
+            /*
+            final var maxListSize = 2 << 16;
+            if (state.listSize > maxListSize) {
+                log.warn("List size of {} (> {}) makes the test run too long, aborting test", state.listSize, maxListSize);
+                return;
+            }
+             */
+            super.append(state);
+        }
+
+        @Override
+        public void prepend(SizedPerfTestState state) {
+            final var maxListSize = 2 << 10;
+            if (state.listSize > maxListSize) {
+                log.warn("List size of {} (> {}) makes the test run too long, aborting test", state.listSize, maxListSize);
+                return;
+            }
+            super.prepend(state);
+        }
     }
 }

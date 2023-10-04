@@ -1,4 +1,6 @@
 plugins {
+    idea
+
     id("java")
     kotlin("jvm") version "1.9.10"
 
@@ -11,6 +13,13 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+}
+
+idea {
+    module {
+        isDownloadSources = true
+        isDownloadJavadoc = true
+    }
 }
 
 dependencies {
@@ -59,8 +68,14 @@ tasks.test {
 jmh {
     warmupIterations = 1
     iterations = 1
-    //fork = 1
-    fork = 0
+    fork = 1
+    //fork = 0
+    jvmArgsPrepend = listOf(
+        "-Xmx1g",
+        "-agentlib:jdwp=transport=dt_socket,server=n,address=localhost:5006,suspend=y"
+    )
+
+    includes = listOf("ArrayListSizedPerfTest.append")
 
     //threads = 2
 }
